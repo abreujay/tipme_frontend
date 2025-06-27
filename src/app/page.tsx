@@ -7,6 +7,7 @@ import { MdOutlineRemoveRedEye } from "react-icons/md";
 
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
+import { LoadingSpinner } from "@/components/Loading/spinner";
 
 
 export default function Login() {
@@ -29,8 +30,8 @@ export default function Login() {
   // Mostra loading enquanto verifica a sessão
   if (status === "loading") {
     return (
-      <div className="bg-black w-full h-screen flex items-center justify-center">
-        <p className="text-cyan-400">Carregando...</p>
+      <div className="flex items-center justify-center h-screen bg-black">
+        <LoadingSpinner size="lg" text="Carregando..." />
       </div>
     );
   }
