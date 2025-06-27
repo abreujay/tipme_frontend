@@ -7,6 +7,7 @@ import { FaRegEyeSlash } from "react-icons/fa";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { LoadingSpinner } from "@/components/Loading/spinner";
 
 
 async function CadastrarUsuario(userData: {
@@ -59,9 +60,9 @@ export default function CadastroPage() {
       // Mostra loading enquanto verifica a sessão
       if (status === "loading") {
         return (
-          <div className="bg-black w-full h-screen flex items-center justify-center">
-            <p className="text-cyan-400">Carregando...</p>
-          </div>
+          <div className="flex items-center justify-center h-screen bg-black">
+             <LoadingSpinner size="lg" text="Carregando..." />
+         </div>
         );
       }
     
