@@ -75,3 +75,67 @@
 ### **Botão Mostrar/Ocultar Senha:**
 
 - `hover:bg-sky-400/10` - Fundo no hover (10% opacidade) */
+
+
+/* Backgrounds */
+
+:root {
+    --midnight-black: #000000;           /* Fundo principal */
+    --shadow-void: rgba(0, 0, 0, 0.8);   /* Cards e overlays */
+    --deep-space: rgba(0, 0, 0, 0.5);    /* Inputs e elementos */
+    --cosmic-mist: rgba(0, 0, 0, 0.3);   /* Elementos sutis */
+
+    /* Azuis Principais */
+    --electric-sky: #38bdf8;             /* sky-400 - Botões e CTAs */
+    --bright-azure: #7dd3fc;             /* sky-300 - Títulos e destaques */
+    --soft-cyan: #bae6fd;                /* sky-200 - Descrições */
+    --pale-blue: #e0f2fe;                /* sky-100 - Textos suaves */
+
+    /* Azuis Secundários */
+    --ocean-blue: #93c5fd;               /* blue-300 - Elementos decorativos */
+    --powder-blue: #dbeafe;              /* blue-200 - Detalhes sutis */
+    --cyan-glow: #67e8f9;                /* cyan-300 - Acentos especiais */
+    --aqua-mist: #a7f3d0;                /* cyan-200 - Partículas */
+
+    /* Estados de Interação */
+    --hover-glow: rgba(56, 189, 248, 0.3);      /* Hover em sky-400 */
+    --focus-ring: rgba(56, 189, 248, 0.2);      /* Focus ring */
+    --active-press: rgba(125, 211, 252, 0.4);   /* Estado ativo */
+    --disabled-fade: rgba(56, 189, 248, 0.1);   /* Elementos desabilitados */
+
+    /* Níveis de Transparência */
+    --ghost-light: rgba(56, 189, 248, 0.03);    /* Grid patterns */
+    --whisper-soft: rgba(56, 189, 248, 0.08);   /* Orbs de fundo */
+    --gentle-glow: rgba(56, 189, 248, 0.15);    /* Linhas sutis */
+    --soft-presence: rgba(56, 189, 248, 0.20);  /* Borders principais */
+    --medium-glow: rgba(56, 189, 248, 0.30);    /* Borders ativos */
+    --strong-accent: rgba(56, 189, 248, 0.50);  /* Elementos destacados */
+
+    /* Cores de Acento */
+    --success-mint: #10b981;             /* green-500 - Sucesso */
+    --warning-amber: #f59e0b;            /* amber-500 - Avisos */
+    --danger-coral: #ef4444;             /* red-500 - Erros */
+    --info-indigo: #6366f1;              /* indigo-500 - Informações */
+
+    /* Cores Semânticas */
+    --text-primary: var(--bright-azure);         /* Títulos principais */
+    --text-secondary: var(--soft-cyan);          /* Descrições */
+    --text-muted: rgba(56, 189, 248, 0.6);      /* Textos secundários */
+    --text-disabled: rgba(56, 189, 248, 0.4);   /* Textos desabilitados */
+
+    --border-primary: rgba(56, 189, 248, 0.2);  /* Borders principais */
+    --border-secondary: rgba(56, 189, 248, 0.1); /* Borders sutis */
+    --border-active: var(--electric-sky);        /* Borders ativos */
+
+    --bg-primary: var(--midnight-black);         /* Fundo principal */
+    --bg-secondary: var(--shadow-void);          /* Cards */
+    --bg-tertiary: var(--deep-space);           /* Inputs */
+
+
+    --error-container: rgba(51, 46, 46, 0.9);        /* bg-black/90 */
+    --error-border: rgba(239, 68, 68, 0.3);       /* border-red-400/30 */
+    --error-accent: #ef4444;                       /* border-l-red-400 */
+    --error-icon: #f87171;                         /* text-red-400 */
+    --error-title: #fca5a5;                        /* text-red-300 */
+    --error-message: #fecaca;                      /* text-red-200 */
+}

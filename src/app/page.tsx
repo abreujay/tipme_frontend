@@ -8,7 +8,7 @@ import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { LoadingSpinner } from "@/components/Loading/spinner";
-
+import Alert from "@/components/Alert/alert";
 
 export default function Login() {
 
@@ -16,6 +16,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const [erro, setErro] = useState("")
   const { data: session, status } = useSession();
  
 
@@ -53,19 +54,22 @@ const handleLogin = async (e: React.FormEvent) => {
     if (result?.ok) {
       router.push("/home"); // Redireciona para uma rota protegida
     } else {
-      alert("Login falhou");
+      setErro("Erro ao fazer login")
     }
   };
 
 
   return (
-    <div
-            className="bg-black w-full h-screen flex items-center justify-center">
-                <div
-                className="bg-black/80 border border-sky-300/20 p-10 rounded-lg shadow-md flex flex-col items-center w-[320px] sm:min-w-md">
-                    <h1
-                    className="text-cyan-400 text-3xl font-bold mb-2"> Fazer Login </h1>
-                    <p className="text-cyan-200 text-[16px]">
+    <div className="bg-black w-full h-screen flex items-center justify-center">
+        { erro && (
+            <div
+            className="absolute top-4 left-1/2 transform -translate-x-1/2 w-[80vw] max-w-[400px]">
+              <Alert title="Erro" description={erro} onClose={() => setErro("")} />
+            </div>
+        )}   
+      <div className="bg-black/80 border border-sky-300/20 p-10 rounded-lg shadow-md flex flex-col items-center w-[320px] sm:min-w-md">
+        <h1 className="text-cyan-400 text-3xl font-bold mb-2"> Fazer Login </h1>
+        <p className="text-cyan-200 text-[16px]">
                       Entre na sua conta para gerenciar seus apoios 
                     </p>
     
