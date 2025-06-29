@@ -5,16 +5,52 @@ import { useState, useEffect } from "react";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { FaRegEyeSlash } from "react-icons/fa";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { LoadingSpinner } from "@/components/Loading/spinner";
+import Alert from "@/components/Alert/alert";
 
 
-async function CadastrarUsuario(userData: {
-    userName: string | FormDataEntryValue | null,
-    userMail: string | FormDataEntryValue | null,
-    userPassword: string | FormDataEntryValue | null
-}) {
+// async function CadastrarUsuario(userData: {
+//     userName: string | FormDataEntryValue | null,
+//     userMail: string | FormDataEntryValue | null,
+//     userPassword: string | FormDataEntryValue | null
+// }) {
+//     try {
+//         const response = await fetch('http://localhost:3000/users/register', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify(userData),
+//         })
+
+//         const data = await response.json();
+
+//         if (!response.ok) {
+//             throw new Error(data.message || 'Erro ao cadastrar usuário');
+//         }
+
+//         alert('Usuário cadastrado com sucesso!');
+//         return data;
+//     } catch (error: any) {
+//         console.error('Erro ao cadastrar usuário:', error);
+//         console.log(userData)
+//         alert('Erro ao cadastrar usuário: ' + (error.message || 'Erro desconhecido'));
+//         throw error;
+//     }
+// }
+
+
+async function CadastrarUsuario(
+    userData: {
+        userName: string | FormDataEntryValue | null,
+        userMail: string | FormDataEntryValue | null,
+        userPassword: string | FormDataEntryValue | null
+    },
+    router: any,
+    setErro: (msg: string) => void
+) {
     try {
         const response = await fetch('http://localhost:3000/users/register', {
             method: 'POST',
@@ -27,59 +63,77 @@ async function CadastrarUsuario(userData: {
         const data = await response.json();
 
         if (!response.ok) {
+            setErro(data.message || 'Erro ao cadastrar usuário');
             throw new Error(data.message || 'Erro ao cadastrar usuário');
         }
 
+        // ← Capturar o userId da resposta
+        const userId = data.userId || data.user?.userId;
+        console.log("UserId capturado:", userId); // Debug
+
         alert('Usuário cadastrado com sucesso!');
+
+        // Login automático após cadastro bem-sucedido
+        const result = await signIn("credentials", {
+            redirect: false,
+            userMail: userData.userMail,
+            userPassword: userData.userPassword,
+        });
+
+        if (result?.ok) {
+            router.push("/home"); // Redireciona para home após login
+        }
+
         return data;
     } catch (error: any) {
-        console.error('Erro ao cadastrar usuário:', error);
-        console.log(userData)
-        alert('Erro ao cadastrar usuário: ' + (error.message || 'Erro desconhecido'));
+        setErro(error.message || 'Erro desconhecido');
         throw error;
     }
 }
 
-
-
 export default function CadastroPage() {
     const [passwordVisible, setPasswordVisible] = useState(false);
-     const router = useRouter();
+    const [erro, setErro] = useState("");
+    const router = useRouter();
     const { data: session, status } = useSession();
-      console.log("Sessão atual:", session); // Verifica se está salva
-      console.log("Status:", status); 
+    console.log("Sessão atual:", session); // Verifica se está salva
+    console.log("Status:", status); 
     
-       // Redireciona se já estiver autenticado
-      useEffect(() => {
+    // Redireciona se já estiver autenticado
+    useEffect(() => {
         if (status === "loading") return; // Ainda carregando
         if (session) {
-          router.push("/home");
+            router.push("/home");
         }
-      }, [session, status, router]);
+    }, [session, status, router]);
     
-      // Mostra loading enquanto verifica a sessão
-      if (status === "loading") {
+    // Mostra loading enquanto verifica a sessão
+    if (status === "loading") {
         return (
-          <div className="flex items-center justify-center h-screen bg-black">
-             <LoadingSpinner size="lg" text="Carregando..." />
-         </div>
+            <div className="flex items-center justify-center h-screen bg-black">
+                <LoadingSpinner size="lg" text="Carregando..." />
+            </div>
         );
-      }
+    }
     
-      // Se já está autenticado, não mostra a página
-      if (session) {
+    // Se já está autenticado, não mostra a página
+    if (session) {
         return null;
-      }
+    }
 
     return (
         <div
         className="bg-black w-full h-screen flex items-center justify-center">
+            { erro && (
+                <div
+                className="absolute top-4 left-1/2 transform -translate-x-1/2 w-[80vw] max-w-[400px]">
+                    <Alert title="Erro ao cadastrar usuário" description={erro} onClose={() => setErro("")} />
+                </div>
+            )}
             <div
             className="bg-black/80 border border-sky-300/20 p-8 rounded-lg shadow-md flex flex-col items-center w-[320px] sm:min-w-md">
                 <h1
                 className="text-cyan-400 text-3xl font-bold mb-2"> Criar Conta </h1>
-                <p className="text-cyan-200 text-[16px]"> Cadastre-se para começar a receber apoio dos seus fãs </p>
-
                 <form
                     onSubmit={async (e) => {
                         e.preventDefault();
@@ -89,7 +143,7 @@ export default function CadastroPage() {
                             userName: formData.get('name'),
                             userMail: formData.get('email'),
                             userPassword: formData.get('password'),
-                        });
+                        }, router, setErro);
                     }}
                     className="w-full max-w-md mt-6 "
                 >
