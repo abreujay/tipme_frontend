@@ -1,5 +1,6 @@
 
 
+
 // import NextAuth from "next-auth";
 // import CredentialsProvider from "next-auth/providers/credentials";
 // import type { NextAuthOptions } from "next-auth";
@@ -12,76 +13,59 @@
 //         userMail: { label: "Email", type: "text" },
 //         userPassword: { label: "Senha", type: "password" },
 //       },
-//   //     
-//   async authorize(credentials) {
-//   console.log("=== AUTHORIZE DEBUG ===");
-//   console.log("Credentials:", credentials);
+//       async authorize(credentials) {
+//         console.log("=== AUTHORIZE ===");
+//         console.log("Credentials:", credentials);
 
-//   const res = await fetch("http://localhost:3000/users/login", {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify({
-//       userMail: credentials?.userMail,
-//       userPassword: credentials?.userPassword,
-//     }),
-//   });
+//         if (!credentials?.userMail || !credentials?.userPassword) {
+//           return null;
+//         }
 
-//   const data = await res.json();
-//   console.log("Resposta completa da API:", data);
+//         try {
+//           const res = await fetch("http://localhost:3000/users/login", {
+//             method: "POST",
+//             headers: { "Content-Type": "application/json" },
+//             body: JSON.stringify({
+//               userMail: credentials.userMail,
+//               userPassword: credentials.userPassword,
+//             }),
+//           });
 
-//   // ← A estrutura correta é: data.token.token e data.token.user
-//   if (res.ok && data.token?.token) {
-//     const userId = data.token.user?.userId; // ← Caminho correto
-//     const tokenValue = data.token.token.token; // ← Token aninhado
-//     const userAvatar = data.token.user?.userAvatar || "default-avatar.jpg";
+//           const data = await res.json();
+//           console.log("Resposta da API:", data);
 
-//     console.log("UserId extraído:", userId);
-//     console.log("Token extraído:", tokenValue);
-//     console.log("Avatar extraído:", userAvatar);
+//           if (!res.ok || !data.token?.token) {
+//             console.log("Login falhou");
+//             return null;
+//           }
 
-//     const userObject = {
-//       id: userId,
-//       email: credentials?.userMail,
-//       token: tokenValue,
-//       userId: userId,
-//       avatar: userAvatar
-//     };
+//           const tokenValue = data.token.token;
+//           console.log("Token extraído:", tokenValue);
 
-//     console.log("Objeto user que será retornado:", userObject);
-//     return userObject;
-//   }
+//           // ← Retornar apenas o token
+//           return {
+//             id: data.token.user?.userId || "",
+//             email: credentials.userMail,
+//             token: tokenValue,
+//           };
 
-//   console.log("Login falhou - res.ok:", res.ok, "data.token:", data.token);
-//   return null;
-// },
+//         } catch (error) {
+//           console.error("Erro:", error);
+//           return null;
+//         }
+//       },
 //     }),
 //   ],
 //   callbacks: {
 //     async jwt({ token, user }) {
-//       console.log("=== JWT CALLBACK ===");
-//       console.log("User recebido:", user);
-//       console.log("Token antes:", token);
-
 //       if (user) {
 //         token.accessToken = user.token;
-//         token.userId = user.userId || user.id;
-//         token.avatar = user.avatar;
 //       }
-
-//       console.log("Token depois:", token);
 //       return token;
 //     },
+    
 //     async session({ session, token }) {
-//       console.log("=== SESSION CALLBACK ===");
-//       console.log("Token recebido:", token);
-//       console.log("Session antes:", session);
-
 //       session.accessToken = token.accessToken as string;
-//       session.userId = token.userId as string;
-//       session.user.id = token.userId as string;
-//       session.user.avatar = token.avatar as string;
-
-//       console.log("Session depois:", session);
 //       return session;
 //     },
 //   },
@@ -93,7 +77,6 @@
 
 // const handler = NextAuth(authOptions);
 // export { handler as GET, handler as POST };
-
 
 
 import NextAuth from "next-auth";
@@ -109,92 +92,104 @@ export const authOptions: NextAuthOptions = {
         userPassword: { label: "Senha", type: "password" },
       },
       async authorize(credentials) {
-        console.log("=== AUTHORIZE DEBUG ===");
+        console.log("=== AUTHORIZE ===");
         console.log("Credentials:", credentials);
 
-        const res = await fetch("http://localhost:3000/users/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userMail: credentials?.userMail,
-            userPassword: credentials?.userPassword,
-          }),
-        });
-
-        const data = await res.json();
-        console.log("Resposta completa da API de login:", data);
-
-        if (res.ok && data.token?.token) {
-          // ← Estrutura da API de login: data.token.user
-          const userId = data.token.user?.userId;
-          const tokenValue = data.token.token.token;
-          const userAvatar = data.token.user?.userAvatar || "default-avatar.jpg";
-          const userName = data.token.user?.userName || "";
-          const artistName = data.token.user?.artistName || "";
-          const bio = data.token.user?.bio || "";
-
-          console.log("UserId extraído:", userId);
-          console.log("Token extraído:", tokenValue);
-          console.log("Avatar extraído:", userAvatar);
-
-          const userObject = {
-            id: userId,
-            email: credentials?.userMail,
-            token: tokenValue,
-            userId: userId,
-            avatar: userAvatar,
-            userName: userName,
-            artistName: artistName,
-            bio: bio
-          };
-
-          console.log("Objeto user que será retornado:", userObject);
-          return userObject;
+        if (!credentials?.userMail || !credentials?.userPassword) {
+          return null;
         }
 
-        console.log("Login falhou - res.ok:", res.ok, "data.token:", data.token);
-        return null;
+        try {
+          const res = await fetch("http://localhost:3000/users/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userMail: credentials.userMail,
+              userPassword: credentials.userPassword,
+            }),
+          });
+
+          const data = await res.json();
+          console.log("Resposta da API:", data);
+
+          if (!res.ok || !data.token?.token) {
+            console.log("Login falhou");
+            return null;
+          }
+
+          const tokenValue = data.token.token;
+          console.log("Token extraído:", tokenValue);
+
+          // ← Retornar apenas o token (demais dados serão buscados no jwt())
+          return {
+            id: data.token.user?.userId || "",
+            email: credentials.userMail,
+            token: tokenValue,
+          };
+
+        } catch (error) {
+          console.error("Erro:", error);
+          return null;
+        }
       },
     }),
   ],
+
   callbacks: {
     async jwt({ token, user }) {
-      console.log("=== JWT CALLBACK ===");
-      console.log("User recebido:", user);
-      console.log("Token antes:", token);
-
+      // Quando o login acontece
       if (user) {
         token.accessToken = user.token;
-        token.userId = user.userId || user.id;
-        token.avatar = user.avatar;
-        token.userName = user.userName;
-        token.artistName = user.artistName;
-        token.bio = user.bio;
+
+        try {
+          const res = await fetch("http://localhost:3000/users/all-info", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            }
+          },
+        );
+
+          const userData = await res.json();
+
+          token.userId = userData.userId;
+          token.userName = userData.userName;
+          token.artistName = userData.artistName;
+          token.bio = userData.bio;
+          token.userMail = userData.userMail;
+          token.userAvatar = userData.userAvatar;
+          token.userLink1 = userData.userLink1;
+          token.userLink2 = userData.userLink2;
+          token.userLink3 = userData.userLink3;
+
+        } catch (err) {
+          console.error("Erro ao buscar dados do usuário:", err);
+        }
       }
 
-      console.log("Token depois:", token);
       return token;
     },
-    async session({ session, token }) {
-      console.log("=== SESSION CALLBACK ===");
-      console.log("Token recebido:", token);
-      console.log("Session antes:", session);
 
+    async session({ session, token }) {
       session.accessToken = token.accessToken as string;
-      session.userId = token.userId as string;
       session.user.id = token.userId as string;
-      session.user.avatar = token.avatar as string;
+      session.user.email = token.userMail as string;
       session.user.userName = token.userName as string;
       session.user.artistName = token.artistName as string;
       session.user.bio = token.bio as string;
+      session.user.avatar = token.userAvatar as string ?? null;
+      session.user.userLink1 = token.userLink1 as string ?? null;
+      session.user.userLink2 = token.userLink2 as string ?? null;
+      session.user.userLink3 = token.userLink3 as string ?? null;
 
-      console.log("Session depois:", session);
       return session;
     },
   },
+
   pages: {
     signIn: "/login",
   },
+
   secret: process.env.NEXTAUTH_SECRET,
 };
 
