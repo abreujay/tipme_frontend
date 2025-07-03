@@ -10,6 +10,8 @@ import { MdOutlineRemoveRedEye } from "react-icons/md";
 
 import { useSession } from "next-auth/react";
 import { LoadingSpinner } from "@/components/Loading/spinner";
+import { title } from "process";
+import { SettingsAlert } from "@/components/Alert/SettingsAlert";
 
 export default function SettingsPage() {
   const { data: session, update, status } = useSession();
@@ -43,6 +45,9 @@ export default function SettingsPage() {
   // const [paypal, setPaypal] = useState<string>("");
 
   const [carregouDados, setCarregouDados] = useState(false);
+
+  // usando state para alert
+ const [alertMessage, setAlertMessage] = useState<{ title: string; message: string; type: "success" | "error" } | null>(null);
 
 
   const [dadosSalvos, setDadosSalvos] = useState({
@@ -126,19 +131,31 @@ export default function SettingsPage() {
     const youtubeSanitized = youtube.trim();
 
     if (instagramSanitized && !isValidInstagram(instagramSanitized)) {
-      alert("O link do Instagram não é válido. Exemplo: https://instagram.com/seu_usuario");
+      setAlertMessage({
+        title: "Erro",
+        message: "O link do Instagram não é válido. Exemplo: https://instagram.com/seu_usuario",
+        type: "error",
+      });
       setSalvandoPerfil(false);
       return;
     }
 
     if (spotifySanitized && !isValidSpotify(spotifySanitized)) {
-      alert("O link do Spotify não é válido. Exemplo: https://open.spotify.com/artist/seu_id");
+      setAlertMessage({
+        title: "Erro",
+        message: "O link do Spotify não é válido. Exemplo: https://open.spotify.com/artist/seu_id",
+        type: "error",
+      });
       setSalvandoPerfil(false);
       return;
     }
 
     if (youtubeSanitized && !isValidYoutube(youtubeSanitized)) {
-      alert("O link do YouTube não é válido. Exemplo: https://youtube.com/c/seu_canal");
+      setAlertMessage({
+        title: "Erro",
+        message: "O link do YouTube não é válido. Exemplo: https://youtube.com/c/seu_canal",
+        type: "error",
+      });
       setSalvandoPerfil(false);
       return;
     }
@@ -154,13 +171,11 @@ export default function SettingsPage() {
       if (userName !== dadosSalvos.userName && userName.trim()) {
         profileData.userName = userName;
         needsProfileUpdate = true;
-        console.log("atualizando nome de usuário", userName);
       }
 
       if (email !== session?.user?.email && email.trim()) {
         profileData.userMail = email;
         needsProfileUpdate = true;
-        console.log("atualizando email", email);
       }
 
       if (
@@ -171,7 +186,6 @@ export default function SettingsPage() {
         profileData.userPassword = senhaAtual;
         profileData.newPassword = senhaNova;
         needsProfileUpdate = true;
-        console.log("atualizando senha");
       }
 
       // ← Fazer fetch para /users/profile se necessário
@@ -335,21 +349,34 @@ export default function SettingsPage() {
             },
           });
 
-          alert("Dados salvos com sucesso!");
-          console.log("Dados salvos com sucesso!");
+          setAlertMessage({
+            title: "Boa!",
+            message: "Perfil atualizado com sucesso!",
+            type: "success",
+          })
         } else {
           //verifica se alguma resposta falhou
           const failedResponses = responses.filter((response) => !response.ok);
           console.error("Falha ao salvar dados:", failedResponses);
-          alert("Falha ao salvar dados. Tente novamente mais tarde.");
-          console.log(session?.accessToken);
+          setAlertMessage({
+            title: "Erro",
+            message: "Houve um erro ao salvar as alterações. Tente novamente mais tarde.",
+            type: "error",
+          })
         }
       } else {
-        alert("Nenhuma alteração detectada para salvar.");
+        setAlertMessage({
+          title: "Atenção",
+          message: "Nenhuma alteração detectada para salvar.",
+          type: "error",
+        });
       }
     } catch {
-      console.error("Erro ao atualizar nome de usuário");
-      alert("Erro ao atualizar nome de usuário. Tente novamente mais tarde.");
+      setAlertMessage({
+        title: "Erro",
+        message: "Erro ao atualizar nome de usuário. Tente novamente mais tarde.",
+        type: "error",
+      });
     } finally {
       setSalvandoPerfil(false);
     }
@@ -391,11 +418,18 @@ export default function SettingsPage() {
             avatar: avatarSelecionado,
           },
         });
-        alert("Avatar atualizado com sucesso!");
-        console.log("Avatar atualizado:", avatarSelecionado);
+       setAlertMessage({
+          title: "Sucesso!",
+          message: "Avatar atualizado com sucesso!",
+          type: "success",
+        });
       }
     } catch {
-      alert("Erro ao atualizar avatar:");
+      setAlertMessage({
+        title: "Erro",
+        message: "Erro ao atualizar avatar. Tente novamente mais tarde.",
+        type: "error",
+      });
     } finally {
       setSalvandoAvatar(false);
     }
@@ -409,6 +443,9 @@ export default function SettingsPage() {
     }
   }, [session]);
 
+  const closeAlert = () => {
+    setAlertMessage(null);
+  };
 
   if (telaCarregando) {
   return (
@@ -427,6 +464,18 @@ export default function SettingsPage() {
 
   return (
     <main className="bg-[var(--midnight-black)] flex items-center text-white min-h-screen flex-col p-2">
+
+      {
+        alertMessage && (
+          <SettingsAlert
+            type={alertMessage.type}
+            title={alertMessage.title}
+            message={alertMessage.message}
+            onClose={closeAlert}
+          />
+        )
+      }
+
       <section className="flex flex-col p-4 gap-6 sm:max-w-[600px] md:max-w-[700px] lg:max-w-[900px] xl:max-w-[1000px] ">
         <article className="flex gap-4 items-center">
           <div className="mb-4">
