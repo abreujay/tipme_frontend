@@ -20,8 +20,17 @@ interface IAlertProps {
 export function SettingsAlert({ title, message, type, onClose }: IAlertProps) {
 
   return (
-     <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-lg px-4">
-      <Alert variant={type === "success" ? "default" : "destructive"}>
+     <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-lg px-4 
+     ">
+      <Alert variant={type === "success" ? "default" : "destructive"}
+      className={`
+          relative shadow-lg 
+          ${type === "success" 
+            ? "bg-[var(--foreground)] border-green-400" 
+            : "bg-[var(--foreground)] border-red-400"
+          }
+        `}
+      >
         {type === "success" ? <CheckCircle2Icon /> : <AlertCircleIcon />}
         
         <AlertTitle>{title}</AlertTitle>
@@ -31,18 +40,18 @@ export function SettingsAlert({ title, message, type, onClose }: IAlertProps) {
 
         {/* Botão OK */}
         {onClose && (
-          <div className="mt-4">
+          <div className="mt-4 ">
             <button
               onClick={onClose}
               className={`
-                px-4 py-2 text-sm font-medium rounded-md transition-colors
+                px-4 py-2 text-sm font-medium rounded-md cursor-pointer transition-colors
                 ${type === "success" 
                   ? "bg-green-600 hover:bg-green-700 text-white" 
                   : "bg-red-600 hover:bg-red-700 text-white"
                 }
               `}
             >
-              OK, entendi
+              OK
             </button>
           </div>
         )}

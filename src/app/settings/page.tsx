@@ -4,14 +4,16 @@ import Voltar from "@/components/Botoes/voltar";
 import { useState, useEffect } from "react";
 import { BiCheck } from "react-icons/bi";
 import { FaSave } from "react-icons/fa";
-import { RiDeleteBin6Line } from "react-icons/ri";
+// import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 
 import { useSession } from "next-auth/react";
 import { LoadingSpinner } from "@/components/Loading/spinner";
-import { title } from "process";
+// import { title } from "process";
 import { SettingsAlert } from "@/components/Alert/SettingsAlert";
+import { DeleteAccountDialog } from "@/components/Dialog/deleteAccountDialog";
+
 
 export default function SettingsPage() {
   const { data: session, update, status } = useSession();
@@ -837,10 +839,8 @@ export default function SettingsPage() {
 
         <div className="flex flex-row gap-4 justify-between">
 
-          <button className=" max-w-[200px] flex items-center gap-2 font-semibold text-[var(--error-icon)] py-2 px-4 border-2 border-[var(--error-border)] rounded-lg focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-200 cursor-pointer">
-            <RiDeleteBin6Line />
-            <p> Excluir Conta </p>
-          </button> 
+           <DeleteAccountDialog/>
+                    
           <button
             className="bg-sky-400 max-w-[200px] flex items-center gap-2 hover:bg-sky-300 text-black font-semibold py-2 px-4 rounded-lg focus:border-sky-300 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-200 cursor-pointer"
             onClick={() => salvarALteracoes()}

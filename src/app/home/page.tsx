@@ -1,5 +1,6 @@
 "use client"
 
+import { LoginDialog } from "@/components/Dialog/LoginDialog";
 import { signOut } from "next-auth/react";
 
 export default function HomePage() {
@@ -19,14 +20,13 @@ export default function HomePage() {
     };
 
     return (
-        <div>
+        <div className="flex flex-col gap-2 items-center justify-center min-h-screen bg-gray-100">
             <h1> home page </h1>
             <button onClick={limparAutenticacao}>
                 Sair da conta
             </button>
-            <a href="/settings">
-                Ir para configurações
-            </a>
+            
+            <LoginDialog />
         </div>
     )
 }
