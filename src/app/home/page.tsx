@@ -2,9 +2,11 @@
 
 import { LoginDialog } from "@/components/Dialog/LoginDialog";
 import { signOut } from "next-auth/react";
+// import { useState } from "react";
 
 export default function HomePage() {
 
+   
         // Função para limpar tudo e redirecionar
     const limparAutenticacao = async () => {
     await signOut({ 
@@ -20,9 +22,9 @@ export default function HomePage() {
     };
 
     return (
-        <div className="flex flex-col gap-2 items-center justify-center min-h-screen bg-gray-100">
-            <h1> home page </h1>
-            <button onClick={limparAutenticacao}>
+        <div className="flex flex-col gap-2 items-center justify-center min-h-screen bg-black">
+            <h1 className="text-white"> home page </h1>
+            <button onClick={limparAutenticacao} className="text-white">
                 Sair da conta
             </button>
             

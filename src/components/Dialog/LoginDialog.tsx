@@ -15,18 +15,27 @@ import { useState } from "react";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 
+import { SettingsAlert } from "@/components/Alert/SettingsAlert";
+
 import { useRouter } from "next/navigation";
 
-import { signIn } from "next-auth/react";   
+import { signIn } from "next-auth/react";  
 
 
-export function LoginDialog() {
+interface ILoginDialogProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function LoginDialog({open, onOpenChange}: ILoginDialogProps) {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const [email, setEmail] = useState("")
   const [senha, setSenha] = useState("")
 
   const [loading, setLoading] = useState(false);
+
+   const [alertMessage, setAlertMessage] = useState<{ title: string; message: string; type: "success" | "error" } | null>(null);
 
   const router = useRouter()
 
@@ -46,33 +55,63 @@ export function LoginDialog() {
 
       if (result?.ok) {
         console.log("✅ Login realizado com sucesso!");
-        alert("✅ Login realizado com sucesso!");
-        
-      
-        // ← Redirecionar para settings
-        router.push("/settings");
+        setAlertMessage({
+          title: "Sucesso",
+          message: "Login realizado com sucesso!",
+          type: "success",
+        });
+
+        setTimeout(()=> {
+          if(onOpenChange) {
+            onOpenChange(false);
+          }
+          router.push("/settings");
+        }, 1500) //espera 1.5 segundos antes de redirecionar
+
       } else {
         console.log("❌ Login falhou:", result?.error);
-        alert("❌ Credenciais inválidas. Verifique email e senha.");
+        setAlertMessage({
+          title: "Erro",
+          message: "❌ Credenciais inválidas. Verifique email e senha.",
+          type: "error",
+        });
       }
 
     } catch (error) {
       console.error("💥 Erro no login:", error);
-      alert("❌ Erro inesperado. Tente novamente.");
+      setAlertMessage({
+        title: "Erro!",
+        message: "Erro inesperado. Tente novamente.",
+        type: "error",
+    });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Dialog>
-      <form>
+    <>
+
+    {alertMessage && (
+      <SettingsAlert
+      title={alertMessage.title}
+      message={alertMessage.message}
+      type={alertMessage.type}
+      onClose={()=> setAlertMessage(null)}
+       />
+    )}
+
+    <Dialog
+    open={open}
+    onOpenChange={onOpenChange}>
         <DialogTrigger asChild>
           <button className="max-w-[200px] flex items-center gap-2 font-semibold text-[var(--error-icon)] py-2 px-4 border-2 border-[var(--error-border)] rounded-lg focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-200 cursor-pointer">
             Configurações
           </button>
         </DialogTrigger>
         <DialogContent className="bg-[var(--midnight-black)] border border-[var(--soft-presence)] [&>button]:text-white [&>button]:hover:bg-gray-700 [&>button]:p-2 [&>button]:rounded-md [&>button]:cursor-pointer">
+        <form
+        onSubmit={confirmarLogin}>
           <DialogHeader className="text-[var(--soft-cyan)]">
             <DialogTitle> Confirme Seus Dados </DialogTitle>
             <DialogDescription>
@@ -81,10 +120,13 @@ export function LoginDialog() {
           </DialogHeader>
           <div className="grid gap-4">
             <div className="grid gap-3">
+                <label className="text-[var(--soft-cyan)] text-[16px] font-semibold">
+                  Email
+                </label>
                 <input
                 type="email"
                 name="email"
-                // value={email}
+                value={email}
                 placeholder="Digite seu email"
                 className="w-full p-2 bg-black/50 border border-sky-400/30 focus:border-sky-300 rounded-md focus:outline-none placeholder:text-sky-400/60 text-sky-100 mt-2"
                 onChange={(e) => setEmail(e.target.value)}
@@ -99,6 +141,7 @@ export function LoginDialog() {
                 <input
                   name="senha"
                   type={passwordVisible ? "text" : "password"}
+                  value={senha}
                   className="w-full p-2 bg-black/50 border border-sky-400/30 focus:border-sky-300 rounded-md focus:outline-none placeholder:text-sky-400/60 text-sky-100 mt-2"
                   placeholder="Digite sua senha"
                   required
@@ -117,7 +160,7 @@ export function LoginDialog() {
               </div>
             </div>
           </div>
-          <DialogFooter className="flex">
+          <DialogFooter className="flex mt-4">
             <DialogClose asChild>
               <button
                 type="button"
@@ -134,8 +177,10 @@ export function LoginDialog() {
               { loading ? "Entrando..." : "Entrar" }
             </button>
           </DialogFooter>
+        </form>
         </DialogContent>
-      </form>
+      
     </Dialog>
+    </>
   );
 }

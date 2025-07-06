@@ -20,6 +20,7 @@ export default function SettingsPage() {
   // Ajuste para evitar erro caso 'id' não exista em 'user'
   // const userId = session?.userId;
 
+
   const avatar = session?.user?.avatar || "/default-avatar.jpg";
 
 
@@ -27,7 +28,10 @@ export default function SettingsPage() {
   const [avatarAtual, setAvatarAtual] = useState<string>();
   const [salvandoAvatar, setSalvandoAvatar] = useState(false);
   const [salvandoPerfil, setSalvandoPerfil] = useState(false);
-  const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const [passwordAtualVisible, setPasswordAtualVisible] = useState(false);
+  const [newPasswordVisible, setNewPasswordVisible] = useState(false);
+  const [passwordConfirmeVisible, setPasswordConfirmeVisible] = useState(false);  
 
   const [userName, setUserName] = useState<string>("");
   const [nomeArtistico, setNomeArtistico] = useState<string>("");
@@ -128,6 +132,45 @@ export default function SettingsPage() {
   const salvarALteracoes = async () => {
     setSalvandoPerfil(true);
 
+     // ← 2. VERIFICAR se precisa de senha atual (apenas para userName, email e senha)
+  const precisaSenhaAtual = 
+    userName !== dadosSalvos.userName ||
+    email !== dadosSalvos.email ||
+    senhaNova.trim() !== "";
+
+  if (precisaSenhaAtual && !senhaAtual.trim()) {
+    setAlertMessage({
+      title: "Erro",
+      message: "Digite sua senha atual para alterar nome de usuário, email ou senha.",
+      type: "error",
+    });
+    setSalvandoPerfil(false);
+    return;
+  }
+
+  // ← 3. VALIDAÇÃO: Nova senha (se preenchida)
+  if (senhaNova.trim()) {
+    if (senhaNova !== confirmarSenha) {
+      setAlertMessage({
+        title: "Erro",
+        message: "Nova senha e confirmação não coincidem.",
+        type: "error",
+      });
+      setSalvandoPerfil(false);
+      return;
+    }
+
+    if (senhaNova.length < 6) {
+      setAlertMessage({
+        title: "Erro",
+        message: "Nova senha deve ter pelo menos 6 caracteres.",
+        type: "error",
+      });
+      setSalvandoPerfil(false);
+      return;
+    }
+  }
+   
     const instagramSanitized = instagram.trim();
     const spotifySanitized = spotify.trim();
     const youtubeSanitized = youtube.trim();
@@ -176,22 +219,17 @@ export default function SettingsPage() {
       }
 
       if (email !== session?.user?.email && email.trim()) {
-        profileData.userMail = email;
-        needsProfileUpdate = true;
+        profileData.userMail = email;        needsProfileUpdate = true;
       }
 
-      if (
-        senhaNova &&
-        senhaNova !== senhaAtual &&
-        senhaNova === confirmarSenha
-      ) {
-        profileData.userPassword = senhaAtual;
-        profileData.newPassword = senhaNova;
-        needsProfileUpdate = true;
-      }
+     if(senhaNova.trim()){
+      profileData.newPassword = senhaNova
+      needsProfileUpdate = true;
+     }
 
       // ← Fazer fetch para /users/profile se necessário
       if (needsProfileUpdate) {
+        profileData.password = senhaAtual
         const profilePromise = fetch("http://localhost:3000/users/profile", {
           method: "PATCH",
           headers: {
@@ -205,6 +243,7 @@ export default function SettingsPage() {
 
       // Verifica se o nome artístico foi alterado
       if (nomeArtistico !== dadosSalvos.nomeArtistico) {
+
         console.log("atualizando nome artistico", nomeArtistico);
 
         const artistNamePromise = fetch(
@@ -243,7 +282,7 @@ export default function SettingsPage() {
 
       //verifica se o instagram foi alterado
       if (instagramSanitized !== dadosSalvos.instagram) {
-        console.log("atualizando instagram", );
+        console.log("atualizando instagram", instagramSanitized);
         const instagramPromise = fetch("http://localhost:3000/users/link1", {
           method: "PATCH",
           headers: {
@@ -262,7 +301,7 @@ export default function SettingsPage() {
 
       //verifica se o spotify foi alterado
       if (spotifySanitized !== dadosSalvos.spotify) {
-        console.log("atualizando spotify", spotify);
+        console.log("atualizando spotify", spotifySanitized);
         const spotifyPromise = fetch("http://localhost:3000/users/link2", {
           method: "PATCH",
           headers: {
@@ -298,7 +337,7 @@ export default function SettingsPage() {
         updatedPromises.push(youtubePromise);
       }
 
-      if(pix !== ""){
+      if(pix !== "") {
         const PixPromise = fetch("http://localhost:3000/pix/save-pix", {
           method: "POST",
           headers: {
@@ -351,6 +390,15 @@ export default function SettingsPage() {
             },
           });
 
+
+          if(precisaSenhaAtual){
+            setSenhaAtual("");
+            setSenhaNova("")
+            setConfirmarSenha("")
+          }
+
+          setPix("")
+
           setAlertMessage({
             title: "Boa!",
             message: "Perfil atualizado com sucesso!",
@@ -373,6 +421,7 @@ export default function SettingsPage() {
           type: "error",
         });
       }
+
     } catch {
       setAlertMessage({
         title: "Erro",
@@ -725,17 +774,18 @@ export default function SettingsPage() {
                 <div className="relative">
                   <input
                     name="senhaAtual"
-                    type={passwordVisible ? "text" : "password"}
+                    type={passwordAtualVisible ? "text" : "password"}
+                    value={senhaAtual}
                     className="w-full p-2 bg-black/50 border border-sky-400/30 focus:border-sky-300 rounded-md focus:outline-none placeholder:text-sky-400/60 text-sky-100 mt-2"
                     placeholder="Digite sua senha"
                     required
                     onChange={(e) => setSenhaAtual(e.target.value)}
                   />
                   <span
-                    onClick={() => setPasswordVisible(!passwordVisible)}
+                    onClick={() => setPasswordAtualVisible(!passwordAtualVisible)}
                     className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
                   >
-                    {passwordVisible ? (
+                    {passwordAtualVisible ? (
                       <FaRegEyeSlash className="text-sky-400" />
                     ) : (
                       <MdOutlineRemoveRedEye className="text-sky-400" />
@@ -751,17 +801,18 @@ export default function SettingsPage() {
                 <div className="relative">
                   <input
                     name="senhaNova"
-                    type={passwordVisible ? "text" : "password"}
+                    type={newPasswordVisible ? "text" : "password"}
+                    value={senhaNova}
                     className="w-full p-2 bg-black/50 border border-sky-400/30 focus:border-sky-300 rounded-md focus:outline-none placeholder:text-sky-400/60 text-sky-100 mt-2"
                     placeholder="Digite sua senha"
                     required
                     onChange={(e) => setSenhaNova(e.target.value)}
                   />
                   <span
-                    onClick={() => setPasswordVisible(!passwordVisible)}
+                    onClick={() => setNewPasswordVisible(!newPasswordVisible)}
                     className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
                   >
-                    {passwordVisible ? (
+                    {newPasswordVisible ? (
                       <FaRegEyeSlash className="text-sky-400" />
                     ) : (
                       <MdOutlineRemoveRedEye className="text-sky-400" />
@@ -777,17 +828,18 @@ export default function SettingsPage() {
                 <div className="relative">
                   <input
                     name="confirmarSenha"
-                    type={passwordVisible ? "text" : "password"}
+                    type={passwordConfirmeVisible ? "text" : "password"}
+                    value={confirmarSenha}
                     className="w-full p-2 bg-black/50 border border-sky-400/30 focus:border-sky-300 rounded-md focus:outline-none placeholder:text-sky-400/60 text-sky-100 mt-2"
                     placeholder="Digite sua senha"
                     required
                     onChange={(e) => setConfirmarSenha(e.target.value)}
                   />
                   <span
-                    onClick={() => setPasswordVisible(!passwordVisible)}
+                    onClick={() => setPasswordConfirmeVisible(!passwordConfirmeVisible)}
                     className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
                   >
-                    {passwordVisible ? (
+                    {passwordConfirmeVisible ? (
                       <FaRegEyeSlash className="text-sky-400" />
                     ) : (
                       <MdOutlineRemoveRedEye className="text-sky-400" />

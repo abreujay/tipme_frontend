@@ -20,7 +20,7 @@ interface IAlertProps {
 export function SettingsAlert({ title, message, type, onClose }: IAlertProps) {
 
   return (
-     <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-lg px-4 
+     <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[9999] w-full max-w-lg px-4 
      ">
       <Alert variant={type === "success" ? "default" : "destructive"}
       className={`
@@ -33,7 +33,10 @@ export function SettingsAlert({ title, message, type, onClose }: IAlertProps) {
       >
         {type === "success" ? <CheckCircle2Icon /> : <AlertCircleIcon />}
         
-        <AlertTitle>{title}</AlertTitle>
+        <AlertTitle
+        className="text-white">
+          {title}
+        </AlertTitle>
         <AlertDescription className="mt-2">
           {message}
         </AlertDescription>
