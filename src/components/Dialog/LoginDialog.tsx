@@ -118,8 +118,8 @@ export function LoginDialog({open, onOpenChange}: ILoginDialogProps) {
               Informe seu Email e Senha para poder continuar
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4">
-            <div className="grid gap-3">
+          <div className="grid gap-2 mt-3">
+            <div className="grid gap-1">
                 <label className="text-[var(--soft-cyan)] text-[16px] font-semibold">
                   Email
                 </label>
@@ -133,7 +133,7 @@ export function LoginDialog({open, onOpenChange}: ILoginDialogProps) {
               />
             </div>
 
-            <div className="grid gap-3">
+            <div className="grid gap-1">
               <label className="text-[var(--soft-cyan)] text-[16px] font-semibold">
                 Senha
               </label>
