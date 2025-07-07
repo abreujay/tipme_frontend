@@ -3,73 +3,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Aqui estão todas as cores utilizadas na versão atual (versão 8) da tela de cadastro:
-
-## 🎨 **Paleta de Cores Completa - Versão 8:**
-
-### **Background Principal:**
-
-- `bg-black` - Fundo principal da tela
-
-### **Grid Pattern:**
-
-- `rgba(56,189,248,0.03)` - Linhas do grid (sky-400 com 3% opacidade)
-
-### **Orbs Flutuantes (Efeitos Decorativos):**
-
-- `bg-sky-400/8` - Orb grande (8% opacidade)
-- `bg-blue-300/6` - Orb médio (6% opacidade)
-- `bg-cyan-300/4` - Orb pequeno (4% opacidade)
-
-### **Linhas Verticais:**
-
-- `from-transparent via-sky-400/20 to-transparent` - Linha esquerda (20% opacidade)
-- `from-transparent via-blue-300/15 to-transparent` - Linha direita (15% opacidade)
-
-### **Acentos dos Cantos:**
-
-- `from-sky-400/10 to-transparent` - Canto superior esquerdo (10% opacidade)
-- `from-blue-300/10 to-transparent` - Canto inferior direito (10% opacidade)
-
-### **Partículas Flutuantes:**
-
-- `bg-sky-300/30` - Partícula 1 (30% opacidade)
-- `bg-blue-200/40` - Partícula 2 (40% opacidade)
-- `bg-cyan-200/35` - Partícula 3 (35% opacidade)
-
-### **Card Principal:**
-
-- `bg-black/80` - Fundo do card (80% opacidade)
-- `border-sky-300/20` - Borda do card (20% opacidade)
-
-### **Textos:**
-
-- `text-sky-300` - Título principal e texto secundário
-- `text-sky-200` - Descrição, labels e links principais
-- `text-sky-100` - Texto dos inputs e hover dos links
-- `text-sky-400/60` - Placeholders (60% opacidade)
-- `text-sky-400` - Texto dos termos e ícones
-
-### **Inputs:**
-
-- `bg-black/50` - Fundo dos inputs (50% opacidade)
-- `border-sky-400/30` - Borda padrão dos inputs (30% opacidade)
-- `focus:border-sky-300` - Borda dos inputs no focus
-- `focus:ring-sky-300/20` - Ring dos inputs no focus (20% opacidade)
-
-### **Botão Principal:**
-
-- `bg-sky-400` - Fundo do botão
-- `hover:bg-sky-300` - Fundo do botão no hover
-- `text-black` - Texto do botão
-
-### **Botão Mostrar/Ocultar Senha:**
-
-- `hover:bg-sky-400/10` - Fundo no hover (10% opacidade) */
-
-/* Backgrounds */
 
 :root {
+
+    /* apenas modo escuro */
+    color-scheme: dark only;
+
     --midnight-black: #000000;           /* Fundo principal */
     --shadow-void: rgba(0, 0, 0, 0.8);   /* Cards e overlays */
     --deep-space: rgba(0, 0, 0, 0.5);    /* Inputs e elementos */
@@ -167,6 +106,7 @@
     --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* 
 .dark {
     --background: oklch(0.141 0.005 285.823);
     --foreground: oklch(0.985 0 0);
@@ -199,13 +139,23 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.552 0.016 285.938);
-}
+} */
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
     }
-  body {
-    @apply bg-background text-foreground;
+
+    html {
+      color-scheme: dark only;
     }
+    body {
+      @apply bg-background text-foreground;
+    }
+}
+
+@media (prefers-color-scheme: light){
+  :root{
+    color-scheme: dark;
+  }
 }
