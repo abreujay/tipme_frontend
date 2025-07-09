@@ -25,9 +25,12 @@ interface UpdateAvatarData {
 
 interface SavePixData {
   pixKey: string;
+  pixName: string; // Nome completo
+  pixCity: string; // Cidade
 }
 
 interface DeleteAccountData {
+  userMail: string;
   userPassword: string;
 }
 
@@ -100,7 +103,10 @@ class SettingsService {
 
   // ← 9. DELETE ACCOUNT
   async deleteAccount(data: DeleteAccountData, token: string) {
-    return this.makeRequest("/users/delete", "DELETE", token, data);
+    return this.makeRequest("/users/delete-user", "DELETE", token, {
+      userMail: data.userMail,
+      userPassword: data.userPassword
+    });
   }
 
   // ← 10. MÉTODO PARA ATUALIZAR MÚLTIPLOS CAMPOS
@@ -113,7 +119,9 @@ class SettingsService {
       spotify?: string;
       youtube?: string;
       soundCloud?: string;
-      pix?: string;
+      pixKey?: string;
+      pixName?: string; // Nome completo
+      pixCity?: string; // Cidade
     },
     token: string
   ) {
@@ -150,8 +158,8 @@ class SettingsService {
     }
 
     // PIX
-    if (updates.pix) {
-      promises.push(this.savePix({ pixKey: updates.pix }, token));
+    if (updates.pixKey && updates.pixName && updates.pixCity) {
+      promises.push(this.savePix({ pixKey: updates.pixKey, pixName: updates.pixName, pixCity: updates.pixCity }, token));
     }
 
     return Promise.all(promises);

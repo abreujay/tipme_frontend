@@ -13,7 +13,9 @@ interface SettingsFormData {
   spotify: string;
   youtube: string;
   // soundcloud: string; // Adicionado campo opcional para SoundCloud
-  pix: string;
+  pixKey: string;
+  pixName: string; // Campo para nome completo
+  pixCity: string; // Campo para cidade
   senhaAtual: string;
   senhaNova: string;
   confirmarSenha: string;
@@ -42,7 +44,9 @@ export function useSettingsForm() {
     spotify: "",
     youtube: "",
     // soundcloud: "", // Inicializando campo opcional
-    pix: "",
+    pixKey: "",
+    pixName: "", // Inicializando campo para nome completo
+    pixCity: "", // Inicializando campo para cidade
     senhaAtual: "",
     senhaNova: "",
     confirmarSenha: "",
@@ -62,7 +66,9 @@ export function useSettingsForm() {
         spotify: session.user.userLink2 || "",
         youtube: session.user.userLink3 || "",
         // soundcloud: session.user.soundCloud || "", // Carregar SoundCloud se disponível
-        pix: "",
+        pixKey: "",
+        pixName: "",
+        pixCity: "",
         senhaAtual: "",
         senhaNova: "",
         confirmarSenha: "",
@@ -85,31 +91,81 @@ export function useSettingsForm() {
       formData.instagram !== dadosSalvos.instagram ||
       formData.spotify !== dadosSalvos.spotify ||
       formData.youtube !== dadosSalvos.youtube ||
-      formData.pix.trim() !== "" ||
+      formData.pixKey.trim() !== "" ||
+      formData.pixName.trim() !== "" ||
+      formData.pixCity.trim() !== "" ||
       formData.senhaNova.trim() !== "";
 
     if (!hasChanges) {
       throw new Error("Nenhuma alteração detectada para salvar.");
     }
 
+    const haspixKeyFields = formData.pixKey.trim() || formData.pixName.trim() || formData.pixCity.trim()
+
+    if(haspixKeyFields){
+      if (!formData.pixKey.trim()) {
+        throw new Error("Campo pixKey é obrigatório quando preenchendo dados de pagamento.");
+      }
+      if (!formData.pixName.trim()) {
+        throw new Error("Nome completo é obrigatório quando preenchendo dados de pagamento.");
+      }
+      if (!formData.pixCity.trim()) {
+        throw new Error("Cidade é obrigatória quando preenchendo dados de pagamento.");
+      }
+      
+      console.log("✅ Dados pixKey válidos:", {
+        pixKey: formData.pixKey,
+        pixName: formData.pixName,
+        pixCity: formData.pixCity
+      });
+    }
+
+    
+
     // Verificar se precisa de senha atual
     const needsPassword = 
-      formData.userName !== dadosSalvos.userName ||
-      formData.email !== dadosSalvos.email ||
-      formData.senhaNova.trim() !== "";
+    formData.userName.trim() !== (dadosSalvos.userName || "").trim() ||
+    formData.email.trim() !== (dadosSalvos.email || "").trim() ||
+    formData.senhaNova.trim() !== "";
+
 
     if (needsPassword && !formData.senhaAtual.trim()) {
       throw new Error("Digite sua senha atual para alterar nome de usuário, email ou senha.");
     }
+
+    const isStrongPassword = (password: string) => {
+      const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
+      return strongRegex.test(password);
+    };
 
     // Validar nova senha
     if (formData.senhaNova.trim()) {
       if (formData.senhaNova !== formData.confirmarSenha) {
         throw new Error("Nova senha e confirmação não coincidem.");
       }
-      if (formData.senhaNova.length < 6) {
-        throw new Error("Nova senha deve ter pelo menos 6 caracteres.");
+      if (!isStrongPassword(formData.senhaNova)) {
+        throw new Error("Senha muito fraca. Use uma senha mais forte com letras maiúsculas, minúsculas, números e símbolos.");
       }
+    }
+
+    const isValidEmail = (email: string) => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+      return emailRegex.test(email);
+    };
+
+    if(formData.email.trim() && !isValidEmail(formData.email)) {
+      throw new Error("O email informado não é válido.");
+    }
+
+
+    //verifica se digirou o nome completo
+    const isValidFullName = (name: string) => {
+      const fullNameRegex = /^[A-Za-zÀ-ÿ]+(?:\s+[A-Za-zÀ-ÿ]+)+$/;
+      return fullNameRegex.test(name.trim());
+    };
+
+    if(formData.pixName.trim() && !isValidFullName(formData.pixName)) {
+      throw new Error("O nome completo deve conter pelo menos dois nomes.");
     }
 
     // Validar links
@@ -192,8 +248,18 @@ export function useSettingsForm() {
         // if (formData.soundcloud !== dadosSalvos.soundcloud) {
         //     updates.soundCloud = formData.soundcloud;
         // }
-      if (formData.pix.trim()) {
-        updates.pix = formData.pix;
+      if (formData.pixKey.trim() && formData.pixName.trim() && formData.pixCity.trim()) {
+        updates.pixKey = formData.pixKey;
+        updates.pixName = formData.pixName;
+        updates.pixCity = formData.pixCity;
+
+        console.log("pixKey adicionado: ", formData.pixKey, formData.pixName, formData.pixCity)
+      } // adiciona pixKey apenas se todos os campos estiverem preenchidos
+
+
+      // Verificar se há algo para enviar
+      if (Object.keys(updates).length === 0) {
+        throw new Error("Nenhuma alteração detectada para salvar.");
       }
 
       // Executar atualizações
@@ -201,6 +267,8 @@ export function useSettingsForm() {
         updates,
         session?.accessToken || ""
       );
+
+      
 
       const allSuccessful = responses.every((response) => response.ok);
 
@@ -232,47 +300,6 @@ export function useSettingsForm() {
     }
   };
 
-  // // Atualizar estado local
-  // const updateLocalState = async () => {
-  //   console.log("Atualizando estado local...");
-  //   const newSavedData = {
-  //     userName: formData.userName,
-  //     email: formData.email,
-  //     nomeArtistico: formData.nomeArtistico,
-  //     bio: formData.bio,
-  //     instagram: formData.instagram,
-  //     spotify: formData.spotify,
-  //     youtube: formData.youtube,
-  //     soundcloud: formData.soundcloud,
-  //   };
-
-  //   setDadosSalvos(newSavedData);
-
-  //   // Limpar campos sensíveis
-  //   setFormData(prev => ({
-  //     ...prev,
-  //     senhaAtual: "",
-  //     senhaNova: "",
-  //     confirmarSenha: "",
-  //     pix: "",
-  //   }));
-
-  //   // Atualizar sessão
-  //   await update({
-  //     ...session,
-  //     user: {
-  //       ...session?.user,
-  //       userName: formData.userName,
-  //       artistName: formData.nomeArtistico,
-  //       bio: formData.bio,
-  //       email: formData.email,
-  //       userLink1: formData.instagram,
-  //       userLink2: formData.spotify,
-  //       userLink3: formData.youtube,
-  //       userLink4: formData.soundcloud,
-  //     },
-  //   });
-  // };
 
 
   // ← CORRIGIR: updateLocalState simplificado
@@ -298,7 +325,9 @@ export function useSettingsForm() {
     // 3. Atualizar formData (manter dados na tela + limpar sensíveis)
     setFormData(prev => ({
       ...newSavedData,      // ← MANTÉM OS DADOS DIGITADOS NA TELA
-      pix: "",             // ← Limpa PIX (temporário)
+      pixKey: "",             // ← Limpa pixKey (temporário)
+      pixName: "",            // ← Limpa nome completo
+      pixCity: "",            // ← Limpa cidade
       senhaAtual: "",      // ← Limpa senha atual
       senhaNova: "",       // ← Limpa nova senha
       confirmarSenha: "",  // ← Limpa confirmação
@@ -312,7 +341,9 @@ export function useSettingsForm() {
     senhaAtual: "",
     senhaNova: "",
     confirmarSenha: "",
-    pix: "",
+    pixKey: "",
+    pixName: "",
+    pixCity: "",
   });
   }
 
@@ -339,3 +370,4 @@ export function useSettingsForm() {
     session,
   };
 }
+

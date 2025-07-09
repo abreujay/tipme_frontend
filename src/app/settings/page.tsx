@@ -946,8 +946,12 @@ export default function SettingsPage() {
     avatarAtual,
     avatarSelecionado,
     salvandoAvatar,
+    avatarMudou,
+    alertMessage: avatarAlertMessage,
+    handleAvatarSelect,
     setAvatarSelecionado,
     handleAtualizarAvatar,
+    closeAlert: closeAvatarAlert,
   } = useAvatarSettings();
 
   const avatars = [
@@ -987,9 +991,10 @@ export default function SettingsPage() {
           avatarAtual={avatarAtual}
           avatarSelecionado={avatarSelecionado}
           salvandoAvatar={salvandoAvatar}
+          avatarMudou={avatarMudou}
           avatars={avatars}
-          onAvatarSelect={setAvatarSelecionado}
-          onUpdateAvatar={handleAtualizarAvatar}
+          onAvatarSelect={handleAvatarSelect} // ← CORRIGIDO
+          onUpdateAvatar={handleAtualizarAvatar} // ← CORRIGIDO
         />
         
         <ProfileInfoForm
@@ -1018,7 +1023,9 @@ export default function SettingsPage() {
         />
         
         <PaymentSettingsForm
-          pix={formData.pix}
+          pixKey={formData.pixKey}
+          pixName={formData.pixName}
+          pixCity={formData.pixCity}
           onUpdateField={updateField}
         />
         
