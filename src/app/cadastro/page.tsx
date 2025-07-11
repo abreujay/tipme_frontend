@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import { useState, useEffect } from "react";
 
@@ -9,7 +9,7 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { LoadingSpinner } from "@/components/Loading/spinner";
 import Alert from "@/components/Alert/alert";
-import AuthRedirectWrapper from "@/components/Wrapper/AuthRedirectWrapper";
+
 
 
 async function CadastrarUsuario(
@@ -19,15 +19,13 @@ async function CadastrarUsuario(
         userPassword: string | FormDataEntryValue | null
     },
     router: any,
-    setErro: (msg: string) => void,
-    setIsLoading: (loading: boolean) => void
+    setErro: (msg: string) => void
 ) {
 
     try {
 
-        setIsLoading(true);
 
-        const response = await fetch('http://localhost:3000/users/register', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -68,8 +66,6 @@ async function CadastrarUsuario(
     } catch (error: any) {
         setErro(error.message || 'Erro desconhecido');
         throw error;
-    } finally{
-        setIsLoading(false);
     }
 }
 
@@ -103,10 +99,8 @@ export default function CadastroPage() {
         return null;
     }
 
-    const [isLoading, setIsLoading] = useState(false);
 
     return (
-      <AuthRedirectWrapper>
         <div
         className="bg-black w-full h-screen flex items-center justify-center">
             { erro && (
@@ -128,7 +122,7 @@ export default function CadastroPage() {
                             userName: formData.get('name'),
                             userMail: formData.get('email'),
                             userPassword: formData.get('password'),
-                        }, router, setErro, setIsLoading);
+                        }, router, setErro);
                     }}
                     className="w-full max-w-md mt-6 "
                 >
@@ -175,7 +169,7 @@ export default function CadastroPage() {
                     <button
                         type="submit"
                         className="mt-6 w-full bg-sky-400 hover:bg-sky-300 text-black font-semibold py-2 px-4 rounded-lg focus:border-sky-300 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-200">
-                            { isLoading ? "Criando..." : "Criar Conta" }
+                           Criar Conta
                     </button>
 
                     <p
@@ -185,6 +179,5 @@ export default function CadastroPage() {
                 </form>
             </div>
         </div>
-     </AuthRedirectWrapper>
     )
 }

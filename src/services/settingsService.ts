@@ -35,7 +35,7 @@ interface DeleteAccountData {
 }
 
 class SettingsService {
-  private baseURL = "http://localhost:3000";
+  private baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
   private async makeRequest(
     endpoint: string,

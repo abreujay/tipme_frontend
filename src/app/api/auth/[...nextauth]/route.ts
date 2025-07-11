@@ -100,7 +100,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          const res = await fetch("http://localhost:3000/users/login", {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -142,7 +142,7 @@ export const authOptions: NextAuthOptions = {
         token.accessToken = user.token;
 
         try {
-          const res = await fetch("http://localhost:3000/users/all-info", {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/all-info`, {
             method: "GET",
             headers: {
               Authorization: `Bearer ${user.token}`,
