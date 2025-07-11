@@ -77,22 +77,22 @@ class SettingsService {
 
   // ← 5. INSTAGRAM (Link 1)
   async updateInstagram(data: UpdateLinkData, token: string) {
-    return this.makeRequest("/users/link1", "PATCH", token, {
-      userLink1: data,
+    return this.makeRequest("/users/link/1", "PATCH", token, {
+      link: data.link,
     });
   }
 
   // ← 6. SPOTIFY (Link 2)
   async updateSpotify(data: UpdateLinkData, token: string) {
-    return this.makeRequest("/users/link2", "PATCH", token, {
-      userLink2: data,
+    return this.makeRequest("/users/link/2", "PATCH", token, {
+      link: data.link,
     });
   }
 
   // ← 7. YOUTUBE (Link 3)
   async updateYoutube(data: UpdateLinkData, token: string) {
-    return this.makeRequest("/users/link3", "PATCH", token, {
-      userLink3: data,
+    return this.makeRequest("/users/link/3", "PATCH", token, {
+      link: data.link,
     });
   }
 
@@ -165,6 +165,8 @@ class SettingsService {
     return Promise.all(promises);
   }
 }
+
+
 
 // ← Exportar instância única (Singleton)
 export const settingsService = new SettingsService();

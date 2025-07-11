@@ -15,6 +15,7 @@ export default function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [erro, setErro] = useState("")
   const { data: session, status } = useSession();
@@ -44,8 +45,11 @@ export default function Login() {
 
 const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setErro(""); // Limpa erros anteriores
 
-    const result = await signIn("credentials", {
+    try {
+       const result = await signIn("credentials", {
       redirect: false,
       userMail: email,
       userPassword: password,
@@ -56,6 +60,13 @@ const handleLogin = async (e: React.FormEvent) => {
     } else {
       setErro("Erro ao fazer login")
     }
+    } catch (error: any) {
+      console.error("Erro ao fazer login:", error);
+      setErro(error.message || "Erro desconhecido");
+    } finally {
+      setIsLoading(false);
+    }
+   
   };
 
 
@@ -120,7 +131,7 @@ const handleLogin = async (e: React.FormEvent) => {
                         <button
                             type="submit"
                             className="mt-6 w-full bg-sky-400 hover:bg-sky-300 text-black font-semibold py-2 px-4 rounded-lg focus:border-sky-300 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-200">
-                              Entrar
+                              { isLoading ? "Carregando..." : "Entrar" }
                         </button>
     
                         <p

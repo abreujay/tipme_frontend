@@ -66,6 +66,7 @@ export function LoginDialog({open, onOpenChange}: ILoginDialogProps) {
             onOpenChange(false);
           }
           router.push("/settings");
+          window.location.href = "/settings"
         }, 1500) //espera 1.5 segundos antes de redirecionar
 
       } else {

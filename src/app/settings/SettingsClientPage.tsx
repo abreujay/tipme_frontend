@@ -17,7 +17,7 @@ import { AccountSettingsForm } from "@/components/Settings/AccountSettingsForm";
 import { PaymentSettingsForm } from "@/components/Settings/PaymentSettingsForm";
 import { SettingsActions } from "@/components/Settings/SettingsActions";
 
-export default function SettingsPage() {
+export default function SettingsClientPage() {
   const { status } = useSession();
   const [passwordVisible, setPasswordVisible] = useState(false);
   

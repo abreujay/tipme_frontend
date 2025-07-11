@@ -1,0 +1,52 @@
+import { useState, useEffect } from "react";
+import { profileService, UserProfileResponse } from "@/services/profileServices";
+
+interface UseUserProfileReturn {
+  userData: UserProfileResponse | null;
+  loading: boolean;
+  error: string | null;
+  refetch: () => void;
+}
+
+export function useUserProfile(userId: string): UseUserProfileReturn {
+  const [userData, setUserData] = useState<UserProfileResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchUserProfile = async () => {
+    if (!userId) return;
+    
+    try {
+      setLoading(true);
+      setError(null);
+      
+      console.log("🔄 Buscando dados do perfil para:", userId);
+      
+      const data = await profileService.getUserProfile({userId});
+      setUserData(data);
+      
+      console.log("✅ Dados do perfil carregados:", data);
+      
+    } catch (err) {
+      console.error("❌ Erro ao buscar perfil:", err);
+      setError(err instanceof Error ? err.message : "Erro ao carregar perfil");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserProfile();
+  }, [userId]);
+
+  const refetch = () => {
+    fetchUserProfile();
+  };
+
+  return {
+    userData,
+    loading,
+    error,
+    refetch,
+  };
+}

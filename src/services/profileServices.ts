@@ -3,6 +3,20 @@ interface GetPixData {
     value: number;
 }
 
+interface GetUserProfileData {
+    userId: string;
+}
+
+interface UserProfileResponse {
+    artistName: string;
+    bio: string;
+    userAvatar: string | null;
+    userLink1: string | null; // Instagram
+    userLink2: string | null; // Spotify
+    userLink3: string | null; // YouTube
+
+}
+
 class ProfileService {
     private baseURL = "http://localhost:3000";
 
@@ -44,6 +58,18 @@ class ProfileService {
         
         return this.makeRequest(endpoint, "GET"); // ← GET sem body
     }
+
+    async getUserProfile(data: GetUserProfileData): Promise<UserProfileResponse> {
+        const endpoint = `/users/get-user-data/${data.userId}`;
+        
+        const response = await this.makeRequest(endpoint, "GET");
+
+        if (!response.ok) {
+            throw new Error("Erro ao obter perfil do usuário");
+        }
+
+        return await response.json()
+    }
 }
 
 export const profileService = new ProfileService()
@@ -51,4 +77,6 @@ export const profileService = new ProfileService()
 // ← Exportar tipos para uso em outros arquivos
 export type {
   GetPixData,
+  GetUserProfileData,
+  UserProfileResponse,
 };

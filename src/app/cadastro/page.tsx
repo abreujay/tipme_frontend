@@ -9,37 +9,7 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { LoadingSpinner } from "@/components/Loading/spinner";
 import Alert from "@/components/Alert/alert";
-
-
-// async function CadastrarUsuario(userData: {
-//     userName: string | FormDataEntryValue | null,
-//     userMail: string | FormDataEntryValue | null,
-//     userPassword: string | FormDataEntryValue | null
-// }) {
-//     try {
-//         const response = await fetch('http://localhost:3000/users/register', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//             body: JSON.stringify(userData),
-//         })
-
-//         const data = await response.json();
-
-//         if (!response.ok) {
-//             throw new Error(data.message || 'Erro ao cadastrar usuário');
-//         }
-
-//         alert('Usuário cadastrado com sucesso!');
-//         return data;
-//     } catch (error: any) {
-//         console.error('Erro ao cadastrar usuário:', error);
-//         console.log(userData)
-//         alert('Erro ao cadastrar usuário: ' + (error.message || 'Erro desconhecido'));
-//         throw error;
-//     }
-// }
+import AuthRedirectWrapper from "@/components/Wrapper/AuthRedirectWrapper";
 
 
 async function CadastrarUsuario(
@@ -49,9 +19,14 @@ async function CadastrarUsuario(
         userPassword: string | FormDataEntryValue | null
     },
     router: any,
-    setErro: (msg: string) => void
+    setErro: (msg: string) => void,
+    setIsLoading: (loading: boolean) => void
 ) {
+
     try {
+
+        setIsLoading(true);
+
         const response = await fetch('http://localhost:3000/users/register', {
             method: 'POST',
             headers: {
@@ -93,6 +68,8 @@ async function CadastrarUsuario(
     } catch (error: any) {
         setErro(error.message || 'Erro desconhecido');
         throw error;
+    } finally{
+        setIsLoading(false);
     }
 }
 
@@ -126,7 +103,10 @@ export default function CadastroPage() {
         return null;
     }
 
+    const [isLoading, setIsLoading] = useState(false);
+
     return (
+      <AuthRedirectWrapper>
         <div
         className="bg-black w-full h-screen flex items-center justify-center">
             { erro && (
@@ -148,7 +128,7 @@ export default function CadastroPage() {
                             userName: formData.get('name'),
                             userMail: formData.get('email'),
                             userPassword: formData.get('password'),
-                        }, router, setErro);
+                        }, router, setErro, setIsLoading);
                     }}
                     className="w-full max-w-md mt-6 "
                 >
@@ -195,7 +175,7 @@ export default function CadastroPage() {
                     <button
                         type="submit"
                         className="mt-6 w-full bg-sky-400 hover:bg-sky-300 text-black font-semibold py-2 px-4 rounded-lg focus:border-sky-300 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-200">
-                            Criar Conta
+                            { isLoading ? "Criando..." : "Criar Conta" }
                     </button>
 
                     <p
@@ -205,5 +185,6 @@ export default function CadastroPage() {
                 </form>
             </div>
         </div>
+     </AuthRedirectWrapper>
     )
 }
