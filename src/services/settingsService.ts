@@ -7,6 +7,19 @@ interface UpdateProfileData {
   password: string; // senha atual para validação
 }
 
+interface UpdatesData {
+  profile?: UpdateProfileData;
+  artistName?: string;
+  bio?: string;
+  instagram?: string;
+  spotify?: string;
+  youtube?: string;
+  pixKey?: string;
+  pixKeyType?: string;
+  pixName?: string;
+  pixCity?: string;
+}
+
 interface UpdateArtistNameData {
   artistName: string;
 }
@@ -34,6 +47,18 @@ interface DeleteAccountData {
   userPassword: string;
 }
 
+type RequestData = 
+  | UpdateProfileData
+  | UpdateArtistNameData
+  | UpdateBioData
+  | UpdateLinkData
+  | UpdateAvatarData
+  | SavePixData
+  | DeleteAccountData
+  | { link: string }
+  | { userMail: string; userPassword: string }
+  | string;
+
 class SettingsService {
   private baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -41,7 +66,7 @@ class SettingsService {
     endpoint: string,
     method: "GET" | "POST" | "PATCH" | "DELETE",
     token: string,
-    data?: string | any
+    data?: RequestData
   ) {
     const response = await fetch(`${this.baseURL}${endpoint}`, {
       method,
@@ -111,18 +136,7 @@ class SettingsService {
 
   // ← 10. MÉTODO PARA ATUALIZAR MÚLTIPLOS CAMPOS
   async updateMultipleFields(
-    updates: {
-      profile?: UpdateProfileData;
-      artistName?: string;
-      bio?: string;
-      instagram?: string;
-      spotify?: string;
-      youtube?: string;
-      soundCloud?: string;
-      pixKey?: string;
-      pixName?: string; // Nome completo
-      pixCity?: string; // Cidade
-    },
+    updates: UpdatesData,
     token: string
   ) {
     const promises: Promise<Response>[] = [];

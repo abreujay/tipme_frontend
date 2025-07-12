@@ -22,6 +22,20 @@ interface SettingsFormData {
   confirmarSenha: string;
 }
 
+// ← DEFINIR INTERFACE PARA UPDATES
+interface UpdatesData {
+  profile?: UpdateProfileData;
+  artistName?: string;
+  bio?: string;
+  instagram?: string;
+  spotify?: string;
+  youtube?: string;
+  pixKey?: string;
+  pixKeyType?: string;
+  pixName?: string;
+  pixCity?: string;
+}
+
 interface AlertMessage {
   title: string;
   message: string;
@@ -291,7 +305,7 @@ export function useSettingsForm() {
       validateForm();
 
       // Preparar atualizações
-      const updates: string | any = {};
+      const updates: UpdatesData = {};
 
       // Profile (userName, email, senha)
       const hasProfileChanges = 
