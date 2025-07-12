@@ -18,7 +18,7 @@ async function CadastrarUsuario(
         userMail: string | FormDataEntryValue | null,
         userPassword: string | FormDataEntryValue | null
     },
-    router: any,
+    router: string | any,
     setErro: (msg: string) => void
 ) {
 
@@ -58,9 +58,9 @@ async function CadastrarUsuario(
         }
 
         return data;
-    } catch (error: any) {
-        setErro(error.message || 'Erro desconhecido');
-        throw error;
+    } catch (error: string | any) {
+        setErro('Erro desconhecido');
+        console.error("Erro ao cadastrar usuário:", error);
     }
 }
 

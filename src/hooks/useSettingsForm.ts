@@ -291,7 +291,7 @@ export function useSettingsForm() {
       validateForm();
 
       // Preparar atualizações
-      const updates: any = {};
+      const updates: string | any = {};
 
       // Profile (userName, email, senha)
       const hasProfileChanges = 

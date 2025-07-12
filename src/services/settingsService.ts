@@ -41,7 +41,7 @@ class SettingsService {
     endpoint: string,
     method: "GET" | "POST" | "PATCH" | "DELETE",
     token: string,
-    data?: any
+    data?: string | any
   ) {
     const response = await fetch(`${this.baseURL}${endpoint}`, {
       method,

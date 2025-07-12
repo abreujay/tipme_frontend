@@ -60,7 +60,7 @@ const handleLogin = async (e: React.FormEvent) => {
     } else {
       setErro("Erro ao fazer login")
     }
-    } catch (error: any) {
+    } catch (error: string | any) {
       console.error("Erro ao fazer login:", error);
       setErro(error.message || "Erro desconhecido");
     } finally {
