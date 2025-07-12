@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 const AuthRedirectWrapper = async ({ children }: { children: React.ReactNode }) => {
   const session = await getServerSession(authOptions);
   if (session) {
-    redirect("/home");
+    redirect("/settings");
   }
   return <> {children} </>;
 };

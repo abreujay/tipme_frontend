@@ -81,9 +81,10 @@
 
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import type { NextAuthOptions } from "next-auth";
+import type { JWT } from "next-auth/jwt";
+import type { Session } from "next-auth";
 
-export const authOptions: NextAuthOptions = {
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -136,7 +137,7 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: { token: JWT; user?: any }) {
       // Quando o login acontece
       if (user) {
         token.accessToken = user.token;
@@ -170,7 +171,7 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
 
-    async session({ session, token }) {
+    async session({ session, token }: { session: Session; token: JWT }) {
       session.accessToken = token.accessToken as string;
       session.user.id = token.userId as string;
       session.user.email = token.userMail as string;

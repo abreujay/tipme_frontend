@@ -54,7 +54,7 @@ async function CadastrarUsuario(
         });
 
         if (result?.ok) {
-            router.push("/home"); // Redireciona para home após login
+            router.push("/settings"); // Redireciona para settings após login
         }
 
         return data;
@@ -76,7 +76,7 @@ export default function CadastroPage() {
     useEffect(() => {
         if (status === "loading") return; // Ainda carregando
         if (session) {
-            router.push("/home");
+            router.push("/settings");
         }
     }, [session, status, router]);
     

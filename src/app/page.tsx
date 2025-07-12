@@ -25,7 +25,7 @@ export default function Login() {
   useEffect(() => {
     if (status === "loading") return; // Ainda carregando
     if (session) {
-      router.push("/home");
+      router.push("/settings");
     }
   }, [session, status, router]);
 
@@ -56,7 +56,7 @@ const handleLogin = async (e: React.FormEvent) => {
     }); 
 
     if (result?.ok) {
-      router.push("/home"); // Redireciona para uma rota protegida
+      router.push("/settings"); // Redireciona para settings após login
     } else {
       setErro("Erro ao fazer login")
     }
