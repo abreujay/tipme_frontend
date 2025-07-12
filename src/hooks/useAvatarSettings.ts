@@ -19,16 +19,17 @@ export function useAvatarSettings() {
 
   // ← CORRIGIR: Sincronizar com a sessão sempre que mudar
   useEffect(() => {
-    if ((session?.user as any)?.avatar) {
-      console.log("🔄 Avatar da sessão encontrado:", (session?.user as any).avatar);
-      setAvatarAtual((session?.user as any).avatar);
+    const userAvatar = (session?.user as { avatar?: string })?.avatar;
+    if (userAvatar) {
+      console.log("🔄 Avatar da sessão encontrado:", userAvatar);
+      setAvatarAtual(userAvatar);
       
       // ← CORRIGIR: Só atualizar selecionado se não há um avatar sendo selecionado
       if (!avatarSelecionado || avatarSelecionado === avatarAtual) {
-        setAvatarSelecionado((session?.user as any).avatar);
+        setAvatarSelecionado(userAvatar);
       }
     }
-  }, [(session?.user as any)?.avatar, avatarAtual, avatarSelecionado]); // ← CORRIGIR: Dependência específica
+  }, [session?.user, avatarAtual, avatarSelecionado]); // ← CORRIGIR: Dependência específica
 
   // ← FUNÇÃO PARA SELECIONAR AVATAR
   const handleAvatarSelect = (avatar: string) => {
@@ -63,7 +64,7 @@ export function useAvatarSettings() {
       
       const response = await settingsService.updateAvatar(
         { avatarUrl: avatarSelecionado },
-        (session as any)?.accessToken || ""
+        (session as { accessToken?: string })?.accessToken || ""
       );
 
       if (!response.ok) {
