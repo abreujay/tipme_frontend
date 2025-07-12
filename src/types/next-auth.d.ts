@@ -6,7 +6,6 @@ declare module "next-auth" {
   interface Session {
     accessToken?: string;
     user: {
-      soundCloud: string;
       id: string;
       email: string;
       userName: string;
