@@ -37,7 +37,7 @@ export function useUserProfile(userId: string): UseUserProfileReturn {
 
   useEffect(() => {
     fetchUserProfile();
-  }, [userId]);
+  }, [userId, fetchUserProfile]);
 
   const refetch = () => {
     fetchUserProfile();

@@ -1,5 +1,4 @@
 import CredentialsProvider from "next-auth/providers/credentials";
-import type { JWT } from "next-auth/jwt";
 
 const authOptions = {
   providers: [
@@ -66,7 +65,7 @@ const authOptions = {
       return token;
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async session({ session, token, ...rest }: any) {
+    async session({ session, token }: any) {
       session.accessToken = token.accessToken as string;
       session.user.id = token.userId as string;
       session.user.email = token.userMail as string;
