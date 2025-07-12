@@ -72,13 +72,13 @@ export function useSettingsForm() {
   useEffect(() => {
     if (session?.user) {
       const userData = {
-        userName: session.user.userName || "",
+        userName: (session.user as any).userName || "",
         email: session.user.email || "",
-        nomeArtistico: session.user.artistName || "",
-        bio: session.user.bio || "",
-        instagram: session.user.userLink1 || "",
-        spotify: session.user.userLink2 || "",
-        youtube: session.user.userLink3 || "",
+        nomeArtistico: (session.user as any).artistName || "",
+        bio: (session.user as any).bio || "",
+        instagram: (session.user as any).userLink1 || "",
+        spotify: (session.user as any).userLink2 || "",
+        youtube: (session.user as any).userLink3 || "",
         pixKey: "",
         pixKeyType: "",
         pixName: "",
@@ -369,7 +369,7 @@ export function useSettingsForm() {
       // Executar atualizações
       const responses = await settingsService.updateMultipleFields(
         updates,
-        session?.accessToken || ""
+        (session as { accessToken?: string })?.accessToken || ""
       );
 
       const allSuccessful = responses.every((response) => response.ok);

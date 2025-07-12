@@ -59,7 +59,7 @@ export function DeleteAccountDialog() {
           userMail: session.user.email,    // ← EMAIL DA SESSÃO
           userPassword: senha           // ← SENHA DIGITADA
         },
-        session.accessToken || ""
+        (session as { accessToken?: string })?.accessToken || ""
       );
 
       console.log("📊 Response:", response);
