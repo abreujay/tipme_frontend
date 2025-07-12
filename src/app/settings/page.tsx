@@ -36,11 +36,8 @@ export default function SettingsPage() {
     avatarSelecionado,
     salvandoAvatar,
     avatarMudou,
-    alertMessage: avatarAlertMessage,
     handleAvatarSelect,
-    setAvatarSelecionado,
     handleAtualizarAvatar,
-    closeAlert: closeAvatarAlert,
   } = useAvatarSettings();
 
   const avatars = [

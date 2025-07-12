@@ -86,15 +86,6 @@ const handleLogin = async (e: React.FormEvent) => {
     
                     <form
                         onSubmit={handleLogin}
-                        // onSubmit={async (e) => {
-                        //     e.preventDefault();
-                        //     const form = e.currentTarget;
-                        //     const formData = new FormData(form);
-                        //     await LoginUsuario({
-                        //         userMail: formData.get('email'),
-                        //         userPassword: formData.get('password'),
-                        //     });
-                        // }}
                         className="w-full max-w-md mt-6 "
                     >
                         <div className="mt-4">

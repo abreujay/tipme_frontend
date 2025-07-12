@@ -43,11 +43,6 @@ async function CadastrarUsuario(
         // ← Capturar o userId da resposta
         const userId = data.userId || data.user?.userId;
         console.log("UserId capturado:", userId); // Debug
-        const userName = data.userName;
-        const userMail = data.userMail;
-        const userAvatar = data.userAvatar || "default-avatar.jpg";
-        const artistName = data.artistName || "";
-        const bio = data.bio || "";
 
         alert('Usuário cadastrado com sucesso!');
 
