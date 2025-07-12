@@ -72,13 +72,13 @@ export function useSettingsForm() {
   useEffect(() => {
     if (session?.user) {
       const userData = {
-        userName: (session.user as any).userName || "",
+        userName: (session.user as { userName?: string }).userName || "",
         email: session.user.email || "",
-        nomeArtistico: (session.user as any).artistName || "",
-        bio: (session.user as any).bio || "",
-        instagram: (session.user as any).userLink1 || "",
-        spotify: (session.user as any).userLink2 || "",
-        youtube: (session.user as any).userLink3 || "",
+        nomeArtistico: (session.user as { artistName?: string }).artistName || "",
+        bio: (session.user as { bio?: string }).bio || "",
+        instagram: (session.user as { userLink1?: string }).userLink1 || "",
+        spotify: (session.user as { userLink2?: string }).userLink2 || "",
+        youtube: (session.user as { userLink3?: string }).userLink3 || "",
         pixKey: "",
         pixKeyType: "",
         pixName: "",

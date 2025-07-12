@@ -1,5 +1,6 @@
 import { PixDonationForm } from "./pixDonationForm";
 import { useUserProfile } from "@/hooks/useProfile";
+import Image from "next/image";
 
 import Link from "next/link";
 
@@ -48,13 +49,14 @@ export default function ProfileHeader({ userId }: ProfileHeaderProps) {
       
       {/* ← AVATAR COM ASPECT-RATIO FIXO */}
         <div className="flex-shrink-0">
-          <div className="w-30 h-30 rounded-full md:w-30 md:h-30 lg-w-40 lg-h-40 overflow-hidden border-4 border-[var(--bright-azure)] bg-gray-200">
-            <img
+          <div className="w-30 h-30 rounded-full md:w-30 md:h-30 lg-w-40 lg-h-40 overflow-hidden border-4 border-[var(--bright-azure)] bg-gray-200 relative">
+            <Image
               src={userData.userAvatar || "/avatar1.jpg"}
               alt={`Avatar de ${userData.artistName || "Usuário"}`}
-              className="w-full h-full object-cover object-center"
-              onError={(e) => {
-                e.currentTarget.src = "/avatar1.jpg";
+              fill
+              className="object-cover object-center"
+              onError={() => {
+                // Fallback handled by Next.js Image component
               }}
             />
           </div>

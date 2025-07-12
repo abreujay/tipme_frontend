@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { profileService, UserProfileResponse } from "@/services/profileServices";
 
 interface UseUserProfileReturn {
@@ -13,7 +13,7 @@ export function useUserProfile(userId: string): UseUserProfileReturn {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchUserProfile = async () => {
+  const fetchUserProfile = useCallback(async () => {
     if (!userId) return;
     
     try {
@@ -33,11 +33,11 @@ export function useUserProfile(userId: string): UseUserProfileReturn {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
 
   useEffect(() => {
     fetchUserProfile();
-  }, [userId, fetchUserProfile]);
+  }, [fetchUserProfile]);
 
   const refetch = () => {
     fetchUserProfile();
